@@ -4,8 +4,10 @@ from pinecone import Pinecone
 from langchain_pinecone import Pinecone as LangchainPinecone
 from langchain_cohere import CohereEmbeddings
 from langchain_community.llms import Ollama
-from langchain.chains import RetrievalQA
+# from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
 from dotenv import load_dotenv
 import os
 
@@ -31,26 +33,40 @@ def initialize_llm():
     return Ollama(model="dolphin-llama3:8b", base_url=OLLAMA_BASE_URL or "http://localhost:11434")
 
 def create_rag_chain(vector_store, llm):
-    prompt_template = """You are a highly capable research assistant. Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+    memory = ConversationBufferMemory(
+        memory_key="chat_history",
+        return_messages=True,
+        output_key="answer"  # Specify the output key to use for memory
+    )
+
+    prompt_template = """You are a highly capable research assistant. Use the following pieces of context and the chat history to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
     Context: {context}
 
-    Question: {question}
+    Chat History: {chat_history}
 
-    Answer: """
+    Human: {question}
+
+    Assistant: """
 
     PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
+        template=prompt_template,
+        input_variables=["context", "chat_history", "question"]
     )
 
-    return RetrievalQA.from_chain_type(
+    return ConversationalRetrievalChain.from_llm(
         llm=llm,
-        chain_type="stuff",
         retriever=vector_store.as_retriever(),
+        memory=memory,
+        combine_docs_chain_kwargs={"prompt": PROMPT},
         return_source_documents=True,
-        chain_type_kwargs={"prompt": PROMPT}
+        output_key="answer"  # Specify the output key here as well
     )
 
 def get_answer(qa_chain, question):
-    result = qa_chain({"query": question})
-    return result["result"], result["source_documents"]
+    try:
+        result = qa_chain({"question": question})
+        return result["answer"], result.get("source_documents", [])
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return "I'm sorry, I encountered an error while processing your question.", []
