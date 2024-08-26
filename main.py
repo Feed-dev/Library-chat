@@ -24,6 +24,8 @@ def main():
         # Display chat history
         display_chat_history(qa_chain)
 
+        print("\nCheck the logs for more detailed information about the retrieval process.")
+
     print("Thank you for using the RAG system!")
 
 def display_chat_history(qa_chain):
