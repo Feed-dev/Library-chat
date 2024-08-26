@@ -10,6 +10,10 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from dotenv import load_dotenv
 import os
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
 
@@ -39,7 +43,7 @@ def create_rag_chain(vector_store, llm):
         output_key="answer"  # Specify the output key to use for memory
     )
 
-    prompt_template = """You are a highly capable research assistant. Use the following pieces of context and the chat history to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+    prompt_template = """You are a highly capable esoteric and occult studies research assistant. Use the following pieces of context and the chat history to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
     Context: {context}
 
@@ -54,9 +58,11 @@ def create_rag_chain(vector_store, llm):
         input_variables=["context", "chat_history", "question"]
     )
 
+    retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 20})
+
     return ConversationalRetrievalChain.from_llm(
         llm=llm,
-        retriever=vector_store.as_retriever(),
+        retriever=retriever,
         memory=memory,
         combine_docs_chain_kwargs={"prompt": PROMPT},
         return_source_documents=True,
@@ -65,8 +71,13 @@ def create_rag_chain(vector_store, llm):
 
 def get_answer(qa_chain, question):
     try:
+        logging.info(f"Processing question: {question}")
         result = qa_chain({"question": question})
+        logging.info(f"Retrieved {len(result['source_documents'])} documents")
+        for i, doc in enumerate(result['source_documents']):
+            logging.info(f"Document {i+1}: {doc.page_content[:100]}...")
+        logging.info(f"Generated answer: {result['answer']}")
         return result["answer"], result.get("source_documents", [])
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        logging.error(f"An error occurred: {str(e)}")
         return "I'm sorry, I encountered an error while processing your question.", []
