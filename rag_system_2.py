@@ -21,7 +21,7 @@ class Config:
     def __init__(self):
         load_dotenv()
         self.PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-        self.PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "great-library-2")
+        self.PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
         self.COHERE_API_KEY = os.getenv("COHERE_API_KEY")
         self.OLLAMA_MODEL = "dolphin-llama3:8b"
 
