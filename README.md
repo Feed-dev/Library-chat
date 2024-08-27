@@ -46,7 +46,7 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 Run the main script:
 
 ```
-python rag_system_2.py
+python rag_system_1.1.py
 ```
 
 Follow the prompts to select a namespace and enter your questions. The system will retrieve relevant context from Pinecone and generate answers using Ollama.
