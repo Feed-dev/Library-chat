@@ -58,9 +58,6 @@ You can modify the following parameters in the `Config` class:
 - `OLLAMA_MODEL`: The Ollama model to use (default is "dolphin-llama3:8b")
 - Search parameters: Adjust the `search_kwargs` in the `get_retriever` function
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
