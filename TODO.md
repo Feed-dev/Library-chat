@@ -1,4 +1,4 @@
-# Web Application To-Do List
+# Web Application To-Do
 
 ## Web Application Framework
 - [ ] Implement a web framework like Flask or FastAPI to create a web interface.
