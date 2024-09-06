@@ -193,13 +193,13 @@ def ask_question(question, namespaces, rag_chain, vectorstore, llm):
         # Format and summarize the response
         formatted_response = format_and_summarize_answer(raw_response, llm)
 
-        print("\nRetrieved Context:")
-        for i, doc in enumerate(all_docs, 1):
-            print(f"Document {i}:")
-            print(doc.page_content)
-            print("---")
+        #print("\nRetrieved Context:")
+        #for i, doc in enumerate(all_docs, 1):
+            #print(f"Document {i}:")
+            #print(doc.page_content)
+            #print("---")
 
-        print("\nFormatted Answer:", formatted_response)
+        #print("\nFormatted Answer:", formatted_response)
         return formatted_response
 
     except Exception as e:
@@ -255,10 +255,10 @@ def main():
             if user_question.lower() == 'quit':
                 break
 
-            print(f"\nProcessing question: {user_question}")
+            #print(f"\nProcessing question: {user_question}")
             print("\nExpanding query...")
             expanded_query = expand_query(user_question, llm)
-            print(f"Expanded query: {expanded_query}")
+            #print(f"Expanded query: {expanded_query}")
 
             print("\nRetrieving and processing information...")
             response = ask_question(expanded_query, namespaces, rag_chain, vectorstore, llm)
