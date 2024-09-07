@@ -158,34 +158,36 @@ def ask_question(question, namespaces, rag_chain, vectorstore, llm):
     try:
         preprocessed_question = simple_preprocess(question)
         expanded_question = expand_query(preprocessed_question, llm)
-        logger.info(f"Preprocessed query: {preprocessed_question}")
-        logger.info(f"Expanded query: {expanded_question}")
+        #logger.info(f"Preprocessed query: {preprocessed_question}")
+        #logger.info(f"Expanded query: {expanded_question}")
 
         all_docs = []
         if isinstance(namespaces, list):
             for namespace in namespaces:
                 retriever = get_retriever(vectorstore, namespace, llm)
-                logger.info(f"Querying Pinecone in namespace '{namespace}' with: {expanded_question}")
+                #logger.info(f"Querying Pinecone in namespace '{namespace}' with: {expanded_question}")
                 docs = retriever.get_relevant_documents(expanded_question)
                 all_docs.extend(docs)
-                logger.info(f"Retrieved {len(docs)} documents from namespace '{namespace}'")
+                #logger.info(f"Retrieved {len(docs)} documents from namespace '{namespace}'")
         else:
             retriever = get_retriever(vectorstore, namespaces, llm)
-            logger.info(f"Querying Pinecone in namespace '{namespaces}' with: {expanded_question}")
+            #logger.info(f"Querying Pinecone in namespace '{namespaces}' with: {expanded_question}")
             all_docs = retriever.get_relevant_documents(expanded_question)
-            logger.info(f"Retrieved {len(all_docs)} documents from namespace '{namespaces}'")
+            #logger.info(f"Retrieved {len(all_docs)} documents from namespace '{namespaces}'")
 
         if len(all_docs) == 0:
             logger.warning("No documents retrieved. Consider adjusting search parameters or verifying content.")
             print("No relevant documents found. Try rephrasing your question or using different keywords.")
             return None
 
+        '''
         logger.info("Retrieved documents:")
         for i, doc in enumerate(all_docs, 1):
             logger.info(f"Document {i}:")
             logger.info(f"Content: {doc.page_content[:200]}...")  # Log first 200 characters of content
             logger.info(f"Metadata: {doc.metadata}")
             logger.info("---")
+        '''
 
         # Use the rag_chain with the retrieved documents
         raw_response = rag_chain.invoke({"question": expanded_question, "context": all_docs})
@@ -193,11 +195,13 @@ def ask_question(question, namespaces, rag_chain, vectorstore, llm):
         # Format and summarize the response
         formatted_response = format_and_summarize_answer(raw_response, llm)
 
-        #print("\nRetrieved Context:")
-        #for i, doc in enumerate(all_docs, 1):
-            #print(f"Document {i}:")
-            #print(doc.page_content)
-            #print("---")
+        '''
+        print("\nRetrieved Context:")
+        for i, doc in enumerate(all_docs, 1):
+            print(f"Document {i}:")
+            print(doc.page_content)
+            print("---")
+        '''
 
         #print("\nFormatted Answer:", formatted_response)
         return formatted_response
@@ -220,7 +224,7 @@ def main():
 
         # Get and log index stats
         stats = index.describe_index_stats()
-        logger.info(f"Index stats: {stats}")
+        #logger.info(f"Index stats: {stats}")
 
         if stats['total_vector_count'] == 0:
             logger.warning("The index is empty. Make sure you've populated it with vectors.")
