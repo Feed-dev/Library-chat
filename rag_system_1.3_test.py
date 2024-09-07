@@ -90,7 +90,7 @@ def get_retriever(vectorstore, namespace, llm):
 
 
 # Enhanced Prompt template
-PROMPT_TEMPLATE = """Given the following context and question, provide a comprehensive and detailed answer. Explore the subject thoroughly, considering multiple aspects and perspectives if applicable. If the context doesn't contain enough information to fully answer the question, clearly state what is known based on the context and what additional information might be needed.
+PROMPT_TEMPLATE = """U are an expert in occult and esoteric teachings. Given the following context and question, provide an answer that provides valuable insight in to the mysteries of the occult and the esoteric to the students. Explore the subject thoroughly, considering multiple aspects and perspectives if applicable. If the context doesn't contain enough information to fully answer the question, clearly state what is known based on the context and what additional information might be needed.
 
 Context:
 {context}
@@ -98,13 +98,12 @@ Context:
 Question: {question}
 
 Instructions:
-1. Analyze the context thoroughly.
-2. Answer the question comprehensively.
-3. Provide relevant examples or explanations when possible.
-4. If there are any uncertainties or gaps in the information, mention them.
-5. Summarize key points at the end of your answer.
+1. Analyze the context thoroughly as an expert in esoteric and occult knowledge.
+2. List the relevant information regarding the question first, as bullet points.
+2. List all interesting and relevant information to broaden the scope from the context, as bullet points, second.
+3. List the titles and authors of the books from the retrieved documents for reference.
 
-Detailed Answer:"""
+Detailed context analysis:"""
 
 PROMPT = PromptTemplate(
     template=PROMPT_TEMPLATE, input_variables=["context", "question"]
@@ -125,12 +124,11 @@ def expand_query(question: str, llm) -> str:
 
 # Answer formatting and summarization function
 def format_and_summarize_answer(answer: str, llm) -> str:
-    format_prompt = f"""Format and summarize the following answer. 
-    Highlight key points, organize information clearly, and provide a brief summary:
+    format_prompt = f"""As an expert esoteric research assistant who wants to impress the lead researcher. Use the research results from the 'Detailed context analysis' to format the following answer as a comprehensive research report:
 
-    Original answer: {answer}
+    Detailed context analysis: {answer}
 
-    Formatted and summarized answer:"""
+    research report:"""
 
     return llm(format_prompt)
 
