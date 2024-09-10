@@ -1,7 +1,10 @@
+gradio
 langchain
 langchain-community
-langchain-pinecone
 langchain-cohere
+langchain-pinecone
 pinecone-client
 python-dotenv
 cohere
+langchain-ollama
+faiss-cpu
