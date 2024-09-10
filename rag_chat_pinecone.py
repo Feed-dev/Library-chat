@@ -16,6 +16,8 @@ from langchain.schema import Document
 from langchain.embeddings.base import Embeddings
 from langchain.schema.runnable import RunnablePassthrough
 
+# Global variable for conversation history
+conversation_history = []
 
 # Configuration
 class Config:
@@ -26,36 +28,28 @@ class Config:
         self.COHERE_API_KEY = os.getenv("COHERE_API_KEY")
         self.OLLAMA_MODEL = "dolphin-llama3:8b"
 
-
 # Logging setup
 def setup_logging():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     return logging.getLogger(__name__)
 
-
 logger = setup_logging()
-
 
 # Pinecone utilities
 def initialize_pinecone(config):
     return Pinecone(api_key=config.PINECONE_API_KEY)
 
-
 def get_pinecone_index(pc, config):
     return pc.Index(config.PINECONE_INDEX_NAME)
-
 
 # Custom Cohere Embeddings
 class CustomCohereEmbeddings(CohereEmbeddings):
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        # Ensure each text is a string
         texts = [str(text) for text in texts]
         return super().embed_documents(texts)
 
     def embed_query(self, text: str) -> List[float]:
-        # Ensure the query is a string
         return super().embed_query(str(text))
-
 
 # Embedding setup
 def get_embeddings(config) -> Embeddings:
@@ -64,11 +58,9 @@ def get_embeddings(config) -> Embeddings:
         cohere_api_key=config.COHERE_API_KEY
     )
 
-
 # Vector store setup
 def create_vectorstore(index, embeddings):
     return PineconeVectorStore(index, embeddings, text_key="text")
-
 
 # LLM setup
 def get_llm(config):
@@ -76,7 +68,6 @@ def get_llm(config):
         model=config.OLLAMA_MODEL,
         callback_manager=CallbackManager([StreamingStdOutCallbackHandler()])
     )
-
 
 # Retriever setup
 def get_retriever(vectorstore, namespace, llm):
@@ -88,29 +79,50 @@ def get_retriever(vectorstore, namespace, llm):
     compressor = LLMChainExtractor.from_llm(llm)
     return ContextualCompressionRetriever(base_compressor=compressor, base_retriever=base_retriever)
 
+# Updated Prompt template
+PROMPT_TEMPLATE = """
+You are an expert knowledge base researcher and organizer.
 
-# Simplified Prompt template
-PROMPT_TEMPLATE = """Context:
+Instructions:
+1. Thoroughly analyze the provided context as an expert in knowledge base management and information architecture.
+2. Gather all question-related relevant information from the context that can contribute to a comprehensive overview of the subject.
+3. List the titles and authors of any referenced sources or documents for citation purposes.
+4. Examine the conversation history ONLY if the question explicitly refers to it.
+5. Organize the information in a clear, logical structure using appropriate headers and subheaders.
+6. Provide concise yet detailed explanations, avoiding unnecessary jargon.
+7. If applicable, suggest ways to improve or expand the knowledge base based on your analysis.
+
+Conversation history:
+{conversation_history}
+
+Context:
 {context}
 
-Question: {question}
+Question:
+{question}
 
-Answer the question based on the provided context."""
+Response:
+[Your structured and detailed response here, following the instructions above]
+
+"""
 
 PROMPT = PromptTemplate(
-    template=PROMPT_TEMPLATE, input_variables=["context", "question"]
+    template=PROMPT_TEMPLATE,
+    input_variables=["context", "question", "conversation_history"]
 )
-
 
 # Create RAG chain
 def create_rag_chain(llm, retriever, prompt):
     rag_chain = (
-            {"context": retriever, "question": RunnablePassthrough()}
-            | prompt
-            | llm
+        {
+            "context": retriever,
+            "question": RunnablePassthrough(),
+            "conversation_history": lambda x: "\n".join([f"Q: {q}\nA: {a}" for q, a in conversation_history[-3:]])
+        }
+        | prompt
+        | llm
     )
     return rag_chain
-
 
 # Text preprocessing
 def simple_preprocess(text):
@@ -119,9 +131,9 @@ def simple_preprocess(text):
     text = " ".join(text.split())
     return text
 
-
 # Question answering function
 def ask_question(question, namespaces, rag_chain, vectorstore, llm):
+    global conversation_history
     try:
         preprocessed_question = simple_preprocess(question)
         logger.info(f"Preprocessed query: {preprocessed_question}")
@@ -152,8 +164,18 @@ def ask_question(question, namespaces, rag_chain, vectorstore, llm):
             logger.info(f"Metadata: {doc.metadata}")
             logger.info("---")
 
-        # Use the rag_chain with the retrieved documents
-        response = rag_chain.invoke({"question": preprocessed_question, "context": all_docs})
+        # Prepare conversation history
+        history_text = "\n".join([f"Q: {q}\nA: {a}" for q, a in conversation_history[-3:]])
+
+        # Use the rag_chain with the retrieved documents and conversation history
+        response = rag_chain.invoke({
+            "question": preprocessed_question,
+            "context": all_docs,
+            "conversation_history": history_text
+        })
+
+        # Add the current Q&A to the conversation history
+        conversation_history.append((question, response))
 
         print("\nRetrieved Context:")
         for i, doc in enumerate(all_docs, 1):
@@ -170,11 +192,10 @@ def ask_question(question, namespaces, rag_chain, vectorstore, llm):
         print(f"An unexpected error occurred: {e}")
         return None
 
-
 # Main execution
 def main():
+    global conversation_history
     config = Config()
-
     try:
         pc = initialize_pinecone(config)
         index = get_pinecone_index(pc, config)
@@ -201,7 +222,6 @@ def main():
 
         print("\nEnter the namespace(s) to search (comma-separated, or 'all' for all namespaces):")
         namespace_input = input().strip().lower()
-
         if namespace_input == 'all':
             namespaces = list(stats['namespaces'].keys())
         elif ',' in namespace_input:
@@ -226,11 +246,11 @@ def main():
                 print("\nAn error occurred while processing the question. Please try again.")
 
         print("Thank you for using the RAG system. Goodbye!")
+        conversation_history = []  # Clear conversation history at the end of the session
 
     except Exception as e:
         logger.error(f"An error occurred: {e}")
         logger.exception("Exception details:")
-
 
 if __name__ == "__main__":
     main()
