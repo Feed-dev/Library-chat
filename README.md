@@ -4,6 +4,7 @@ This repository contains a Retrieval-Augmented Generation (RAG) system that conn
 and Ollama to deploy dolphin-llama3:8b locally for unrestricted chat with your private vectorized library. 
 The system is designed to answer questions based on a given context, which is retrieved from the Pinecone index.
 To set up a pinecone index from pdf books u can look at my other project: "Pdf-extraction-to-vector-storage".
+I added a "talk to pdf" & "search pdf library" script with gradio ui, as a bonus.
 
 ## Features
 
@@ -26,7 +27,7 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 1. Clone this repository:
    ```
    git clone https://github.com/Feed-dev/Library-chat.git
-   cd rag-system
+   
    ```
 
 2. Install the required packages:
@@ -43,10 +44,10 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 
 ## Usage
 
-Run the main script:
+Run the gradio ui script:
 
 ```
-python rag_system_1.2.py
+python rag_chat_pinecone_gradio_ui.py
 ```
 
 Follow the prompts to select a namespace and enter your questions. The system will retrieve relevant context from Pinecone and generate answers using Ollama.
@@ -54,7 +55,6 @@ Follow the prompts to select a namespace and enter your questions. The system wi
 ## Configuration
 
 You can modify the following parameters in the `Config` class:
-
 - `OLLAMA_MODEL`: The Ollama model to use (default is "dolphin-llama3:8b")
 - Search parameters: Adjust the `search_kwargs` in the `get_retriever` function
 
