@@ -1,10 +1,10 @@
-# RAG System with Pinecone and Ollama
+# RAG Systems for Talking to Pinecone Vector Store & Search and Talk to Local Pdf Library
 
-This repository contains a Retrieval-Augmented Generation (RAG) system that connect to your Pinecone vector storage for retrieval, 
-and Ollama to deploy dolphin-llama3:8b locally for unrestricted chat with your private vectorized library. 
-The system is designed to answer questions based on a given context, which is retrieved from the Pinecone index.
+This repository contains a Retrieval-Augmented Generation (RAG) system that connect to your Pinecone vector storage for retrieval,
+or searches your local pdf library to chat with your pdf files.
+They both use Ollama to deploy dolphin-llama3:8b locally for unrestricted chat with your private knowledgebase.
 To set up a pinecone index from pdf books u can look at my other project: "Pdf-extraction-to-vector-storage".
-I added a "talk to pdf" & "search pdf library" script with gradio ui, as a bonus.
+
 
 ## Features
 
