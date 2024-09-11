@@ -41,6 +41,19 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
    PINECONE_INDEX_NAME=your_pinecone_index_name
    COHERE_API_KEY=your_cohere_api_key
    ```
+4. Install the dolphin-llama3:8b or the dolphin-2.9.4-llama3.1-8b model:
+
+   Install Ollama: https://ollama.com/
+
+   dolphin-llama3:8b: https://ollama.com/library/dolphin-llama3
+   ```
+   ollama pull dolphin-llama3
+   ```
+   
+   dolphin-2.9.4-llama3.1-8b: https://ollama.com/rjmalagon/dolphin-2.9.4-llama3.1-8b:
+   ```
+   ollama pull rjmalagon/dolphin-2.9.4-llama3.1-8b:f16
+   ```
 
 ## Usage
 
