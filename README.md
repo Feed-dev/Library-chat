@@ -46,11 +46,10 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 
    Install Ollama: https://ollama.com/
 
-   dolphin-llama3:8b: https://ollama.com/library/dolphin-llama3 (default):
+   dolphin-llama3:8b: https://ollama.com/library/dolphin-llama3:
    ```
    ollama pull dolphin-llama3
    ```
-   
    dolphin-2.9.4-llama3.1-8b: https://ollama.com/rjmalagon/dolphin-2.9.4-llama3.1-8b:
    ```
    ollama pull rjmalagon/dolphin-2.9.4-llama3.1-8b:f16
