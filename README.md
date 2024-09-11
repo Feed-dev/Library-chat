@@ -10,10 +10,11 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 
 - Uses Pinecone for efficient vector storage and retrieval
 - Employs Cohere for text embeddings
-- Utilizes Ollama with dolphin-llama3:8b as the language model
+- Utilizes Ollama with dolphin-llama3:8b or dolphin-2.9.4-llama3.1-8b as the language model
 - Implements a contextual compression retriever for more relevant document retrieval
 - Supports namespaced queries in Pinecone
 - Includes logging for better debugging and monitoring
+- Search and talk directly to pdf's from 100% private library on local machine
 
 ## Requirements
 
@@ -45,7 +46,7 @@ To set up a pinecone index from pdf books u can look at my other project: "Pdf-e
 
    Install Ollama: https://ollama.com/
 
-   dolphin-llama3:8b: https://ollama.com/library/dolphin-llama3
+   dolphin-llama3:8b: https://ollama.com/library/dolphin-llama3 (default):
    ```
    ollama pull dolphin-llama3
    ```
