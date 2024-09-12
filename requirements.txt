@@ -8,3 +8,5 @@ python-dotenv
 cohere
 langchain-ollama
 faiss-cpu
+pypdf
+huggingface-hub
