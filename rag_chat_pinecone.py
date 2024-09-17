@@ -89,7 +89,7 @@ Instructions:
 3. List the titles and authors of any referenced sources or documents for citation purposes.
 4. Examine the conversation history ONLY if the question explicitly refers to it.
 5. Organize the information in a clear, logical structure using appropriate headers and subheaders.
-6. Provide concise yet detailed explanations, avoiding unnecessary jargon
+6. Provide concise yet detailed explanations, avoiding unnecessary jargon.
 
 Conversation history:
 {conversation_history}
