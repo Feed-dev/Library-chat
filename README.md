@@ -69,4 +69,4 @@ You can modify the following parameters in the `Config` class:
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License
