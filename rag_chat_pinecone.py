@@ -15,6 +15,13 @@ from langchain.retrievers.document_compressors import LLMChainExtractor
 from langchain.schema import Document
 from langchain.embeddings.base import Embeddings
 from langchain.schema.runnable import RunnablePassthrough
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Set the library root directory here
+PROMPT_TEMPLATE = os.getenv('PROMPT_TEMPLATE')
 
 # Global variable for conversation history
 conversation_history = []
@@ -79,7 +86,8 @@ def get_retriever(vectorstore, namespace, llm):
     compressor = LLMChainExtractor.from_llm(llm)
     return ContextualCompressionRetriever(base_compressor=compressor, base_retriever=base_retriever)
 
-# Updated Prompt template
+# example Prompt template, set in .env
+'''
 PROMPT_TEMPLATE = """
 You are an expert knowledge base researcher and organizer.
 
@@ -104,11 +112,12 @@ Response:
 [Your structured and detailed response here, following the instructions above]
 
 """
+'''
 
 PROMPT = PromptTemplate(
-    template=PROMPT_TEMPLATE,
-    input_variables=["context", "question", "conversation_history"]
-)
+            template=PROMPT_TEMPLATE,
+            input_variables=["context", "chat_history", "question"]
+        )
 
 # Create RAG chain
 def create_rag_chain(llm, retriever, prompt):
