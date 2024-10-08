@@ -6,9 +6,14 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Set the library root directory here
-LIBRARY_ROOT = "C:/Users/feder/e-books/Mystic_Library_A_Z"
+LIBRARY_ROOT = os.getenv('LIBRARY_ROOT')
+PROMPT_TEMPLATE = os.getenv('PROMPT_TEMPLATE')
 
 
 def search_pdfs(search_term):
@@ -62,19 +67,19 @@ def setup_conversation(pdf_path):
             return_messages=True
         )
 
-        prompt_template = """Use the following pieces of context to answer the question at the end. 
+        # Example prompt template, set it in .env
+        '''
+        prompt_template = """Use the following pieces of context to answer the question at the end.
         If you don't know the answer, just say that you don't know, don't try to make up an answer.
-
         {context}
-
         Chat History:
         {chat_history}
-
-        Human: {question}
-        Assistant:"""
+        H: {question}
+        A:"""
+        '''
 
         prompt = PromptTemplate(
-            template=prompt_template,
+            template=PROMPT_TEMPLATE,
             input_variables=["context", "chat_history", "question"]
         )
 
