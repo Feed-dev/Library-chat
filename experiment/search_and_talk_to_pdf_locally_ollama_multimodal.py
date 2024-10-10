@@ -14,6 +14,7 @@ load_dotenv()
 LIBRARY_ROOT = os.getenv('LIBRARY_ROOT')
 PROMPT_TEMPLATE = os.getenv('PROMPT_TEMPLATE')
 
+
 def search_pdfs(search_term):
     if not os.path.exists(LIBRARY_ROOT):
         print(f"Directory '{LIBRARY_ROOT}' does not exist.")
