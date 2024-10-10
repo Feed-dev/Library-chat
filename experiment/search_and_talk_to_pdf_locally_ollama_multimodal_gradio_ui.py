@@ -1,6 +1,6 @@
 import gradio as gr
 import os
-from search_and_talk_to_pdf_locally_ollama_multimodal import search_pdfs, setup_conversation, LIBRARY_ROOT
+from experiment.search_and_talk_to_pdf_locally_ollama_multimodal import search_pdfs, setup_conversation, LIBRARY_ROOT
 
 conversation_chain = None
 conversation_history = []
