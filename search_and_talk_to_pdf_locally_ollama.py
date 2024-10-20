@@ -120,7 +120,7 @@ def main():
                 except Exception as e:
                     print(f"Error processing question: {e}")
         else:
-            print("Failed to set up the conversation. Please check your setup and try again.")
+            print("Failed to set up conversation. Please check your setup and try again.")
 
 
 if __name__ == "__main__":
